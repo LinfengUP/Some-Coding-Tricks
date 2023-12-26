@@ -101,3 +101,7 @@ if __name__=="__main__":
         train(args,run)
     else:
         train(args)
+
+
+# launch by
+# torchrun --nproc_per_node=4 --nnodes=3 --node_rank=0 --master_addr=192.168.0.101 --master_port=29500 file.py args
