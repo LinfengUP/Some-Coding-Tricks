@@ -28,5 +28,6 @@ def merge_new_config(config, new_config):
     return config
 
 if __name__ == "__main__":
-  path = "./example.yaml"
-  cfg = cfg_from_yaml_file(path)
+    path = "config/example.yaml"
+    cfg = cfg_from_yaml_file(path)
+    print(cfg)
