@@ -13,7 +13,7 @@ class MultiHeadAttention(nn.Module):
         self.value_linear = nn.Linear(d_model, d_model)
         self.output_linear = nn.Linear(d_model, d_model)
 
-    def forward(self, input):
+    def forward(self, input,attention_mask=None):
         batch_size = input.size(0)
         seq_len = input.size(1)
 
@@ -32,9 +32,13 @@ class MultiHeadAttention(nn.Module):
         key = key.transpose(1, 2)  # [batch_size, num_heads, seq_len, d_k]
         value = value.transpose(1, 2)  # [batch_size, num_heads, seq_len, d_k]
 
+        if attn_mask:
+            attn_mask = attn_mask.repeat(num_heads, 1, 1)
+        
         # Scaled dot-product attention
         scores = torch.matmul(query, key.transpose(-2, -1))  # [batch_size, num_heads, seq_len, seq_len]
         scores = scores / torch.sqrt(torch.tensor(self.d_k, dtype=torch.float32))
+        scores = scores.masked_fill(attn_mask == 0, -1e9)
 
         attention_weights = nn.Softmax(dim=-1)(scores)
         attention_output = torch.matmul(attention_weights, value)  # [batch_size, num_heads, seq_len, d_k]
